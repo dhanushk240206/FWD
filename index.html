@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1e2a34;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: row;
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            background-color: #2a3a48;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Profile Picture Section */
+        .profile-pic {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin-right: 40px; /* Add space between image and content */
+        }
+
+        .profile-image-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #3b4a58;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #7b8995;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .profile-image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Removed the plus icon */
+        .profile-image-placeholder::before {
+            content: '';
+            display: none; /* Hidden */
+        }
+
+        .profile-pic input[type="file"] {
+            display: none;
+        }
+
+        .profile-pic label {
+            color: #00aaff;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Profile Content Section */
+        .profile-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Profile Title */
+        .profile-content h1 {
+            font-size: 36px;
+            color: #00aaff;
+            margin-bottom: 20px;
+            text-align: left;
+            font-variant: small-caps;
+        }
+
+        .profile-field {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .profile-field label {
+            font-size: 16px;
+            color: #c2c2c2;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .input-container input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #2a3a48;
+            border: 1px solid #3b4a58;
+            border-radius: 5px;
+            color: #fff;
+            outline: none;
+        }
+
+        .input-container input[readonly] {
+            background-color: #1e2a34;
+            color: #7b8995;
+            cursor: not-allowed;
+        }
+
+        /* Button Styles */
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-edit {
+            background-color: #00aaff;
+            color: #fff;
+        }
+
+        .button-save {
+            background-color: #4CAF50;
+            color: #fff;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-pic">
+            <!-- Profile Picture Placeholder with + icon removed -->
+            <label for="fileUpload" class="profile-image-placeholder" id="profileImageContainer">
+                <img src="" alt="Profile Image" id="profileImagePreview" style="display: none;">
+            </label>
+            <input type="file" id="fileUpload" accept="image/*" onchange="previewImage(event)">
+            <label id="uploadLabel" for="fileUpload">Upload Your Image</label>
+        </div>
+        
+        <div class="profile-content">
+            <h1>Profile</h1>
+            <div class="profile-field">
+                <label>Name</label>
+                <div class="input-container">
+                    <input type="text" value="John Doe" readonly>
+                </div>
+            </div>
+            <div class="profile-field">
+                <label>Email-id</label>
+                <div class="input-container">
+                    <input type="email" value="john.doe@example.com" readonly>
+                </div>
+            </div>
+            <div class="profile-field">
+                <label>Address</label>
+                <div class="input-container">
+                    <input type="text" placeholder="Enter your address" value="1234 Elm St, Springfield" readonly>
+                </div>
+            </div>
+            <div class="profile-field">
+                <label>Date Of Birth</label>
+                <div class="input-container">
+                    <input type="date" readonly>
+                </div>
+            </div>
+            <div class="profile-field">
+                <label>Phone-no</label>
+                <div class="input-container">
+                    <input type="tel" placeholder="Enter your phone number" readonly>
+                </div>
+            </div>
+
+            <!-- Button Container for Edit and Save Buttons -->
+            <div class="btn-container">
+                <button class="button button-edit" onclick="editProfile()">Edit</button>
+                <button class="button button-save" id="saveButton" onclick="saveProfile()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript function to preview the uploaded image
+        function previewImage(event) {
+            const profileImagePreview = document.getElementById("profileImagePreview");
+            const profileImageContainer = document.getElementById("profileImageContainer");
+            const uploadLabel = document.getElementById("uploadLabel");
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImagePreview.src = e.target.result;
+                    profileImagePreview.style.display = "block";
+                    profileImageContainer.style.background = "none";
+                    uploadLabel.innerText = "Change Image";
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Edit Profile Function
+        function editProfile() {
+            // Make fields editable
+            document.querySelectorAll('.input-container input').forEach(input => {
+                if (input.type !== 'text' && input.type !== 'email') {
+                    input.removeAttribute('readonly');
+                }
+            });
+            // Show the Save button
+            document.getElementById('saveButton').style.display = 'inline-block';
+        }
+
+        // Save Profile Function
+        function saveProfile() {
+            // Make fields read-only again
+            document.querySelectorAll('.input-container input').forEach(input => {
+                input.setAttribute('readonly', true);
+            });
+            // Hide the Save button
+            document.getElementById('saveButton').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
